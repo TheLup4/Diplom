@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>main.cpp</file>
+        <file>icons/ButtonStart.png</file>
+        <file>icons/Rectangle1.png</file>
+        <file>icons/MenuButton.png</file>
+        <file>icons/CloseButton.png</file>
+        <file>icons/ButtonOpenPort.png</file>
+    </qresource>
+</RCC>
