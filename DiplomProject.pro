@@ -1,5 +1,7 @@
-QT += quick
-CONFIG += c++11
+QT += quick core gui printsupport charts serialport
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+CONFIG += c++11 \
+          qtquickcompiler
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -14,15 +16,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        parser.cpp \
+        qmlplot/qcustomplot.cpp \
+        qmlplot/qmlplot.cpp
 
 RESOURCES += qml.qrc \
-    icons.qrc \
-    icons.qrc \
     icons.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
+QML_IMPORT_PATH =$$PWD
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
@@ -33,4 +36,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    packet.h \
+    parser.h \
+    qmlplot/qcustomplot.h \
+    qmlplot/qmlplot.h
+
+FORMS +=
+
+DISTFILES +=
