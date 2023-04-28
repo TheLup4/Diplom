@@ -436,6 +436,7 @@ void QCPPainter::save()
 {
     mAntialiasingStack.push(mIsAntialiasing);
     QPainter::save();
+    QPainter::restore();
 }
 
 /*!

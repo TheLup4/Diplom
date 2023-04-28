@@ -3,14 +3,9 @@ import CustomPlot 1.0
 
 Item {
     id: plotForm
-
-    Text {
-        id: text
-        text: qsTr("Plot form")
-    }
-
+    property var plot : objectPlot;
     CustomPlotItem {
-        id: customPlot
+        id: objectPlot
         anchors.fill: parent
 
         Component.onCompleted: initCustomPlot()

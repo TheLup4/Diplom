@@ -2,6 +2,8 @@
 
 const int kFulTlmtPacketSize = sizeof(dataPack);
 QByteArray kTlmtHeader = "\xFF";
+QString strTlmtHeader = "FF";
+QString strEndLine = "\r\n";
 
 ParserTelemetry::ParserTelemetry(QObject* parent) : QObject(parent)
 {
@@ -38,10 +40,10 @@ bool ParserTelemetry::openPort(QString name, int baudrate, int databits, int sto
         _errorCounter = 0;
         connect(_pPort, &QSerialPort::readyRead, this, &ParserTelemetry::onReadyRead, Qt::UniqueConnection);
         qDebug() << "port opened:" << _pPort->isOpen();
-        QMessageBox warning;
-        warning.setWindowTitle("");
-        warning.setText(QString("Порт %1 открыт").arg(name));
-        warning.exec();
+        //        QMessageBox warning;
+        //        warning.setWindowTitle("");
+        //        warning.setText(QString("Порт %1 открыт").arg(name));
+        //        warning.exec();
         return true;
     }
     else
@@ -61,14 +63,23 @@ void ParserTelemetry::closePort()
         if (_pPort->isOpen())
         {
             _pPort->close();
+            QMessageBox warning;
+            warning.setWindowTitle("");
+            warning.setText(QString("Порт закрыт"));
+            warning.exec();
         }
 }
 
 void ParserTelemetry::onReadyRead()
 {
     _rawBuffer.append(_pPort->readAll());
-    qDebug() << _rawBuffer.toHex(',');
+    //qDebug() << _rawBuffer.toHex(',');
     emit sendRawBuffer(_rawBuffer.toHex(','));
+    if (getIsHaveFullBasePack())
+        checkRawBaseData();
+
+    _strRawBuffer.append(_pPort->readLine());
+    qDebug() << _strRawBuffer;
     if (getIsHaveFullBasePack())
         checkRawBaseData();
 }
@@ -106,7 +117,19 @@ void ParserTelemetry::checkRawBaseData()
         }
         _rawBuffer.clear();
     }
+
+    //    while (_strRawBuffer.contains(strTlmtHeader))
+    //    {
+    //        _strRawBuffer.remove(strTlmtHeader + ",");
+    //        _strRawBuffer.remove("\r\n");
+    //        QStringList strData = _strRawBuffer.split(",");
+    //        dataPack packet;
+    //        packet.temperature = strData.at(0).toDouble();
+    //        packet.CO2 = strData.at(1).toDouble();
+    //        packet.CH4 = strData.at(2).toDouble();
+    //    }
 }
+
 bool ParserTelemetry::getIsHaveFullBasePack()
 {
     if (_rawBuffer.contains(kTlmtHeader))
@@ -114,6 +137,10 @@ bool ParserTelemetry::getIsHaveFullBasePack()
         if (_rawBuffer.length() >= kFulTlmtPacketSize)
             return true;
     }
+
+    if (_strRawBuffer.contains(strTlmtHeader) && _strRawBuffer.contains(strEndLine))
+        return true;
+
     return false;
 }
 

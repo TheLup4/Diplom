@@ -4,14 +4,17 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
 
 Item {
-    id:secondPage
-    visible: false
+    id:termPage
+   // visible: false
 
+    property var objectPlot:
     Connections {
         target: objectPlot
         onSignalNewBuffer:
         {
-            rawText.text = buffer;
+            console.log(buffer)
+            textEdit.text = buffer;
+
         }
     }
 
@@ -128,13 +131,9 @@ Item {
             id: textEdit
             width: 537
             height: 176
-            text: rawText
             readOnly: true
+            font.pixelSize: 10
 
-            Text{
-            id: rawText
-            font.pixelSize: 12
-            }
 
 
         }

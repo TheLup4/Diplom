@@ -11,5 +11,6 @@
         <file>FirstPage.qml</file>
         <file>SecondPage.qml</file>
         <file>icons/ButtonUpdate.png</file>
+        <file>FunctionsPage.qml</file>
     </qresource>
 </RCC>

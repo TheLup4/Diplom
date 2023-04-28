@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
         },
         Qt::QueuedConnection);
 
-    CustomPlotItem objectPlot;
-    engine.rootContext()->setContextProperty("objectPlot", &objectPlot);
+    //    CustomPlotItem objectPlot;
+    //    engine.rootContext()->setContextProperty("objectPlot", &objectPlot);
 
     engine.load(url);
     return app.exec();

@@ -28,9 +28,14 @@ public:
     Q_INVOKABLE void initCustomPlot();
 
     Q_INVOKABLE bool portIsOpen();
+    Q_INVOKABLE void showGraph(int index, bool isShown);
+    Q_INVOKABLE void setSaveDir(QString saveDirQml);
+    Q_INVOKABLE void setLimits(int index, bool isShown, QString value);
 public slots:
     void openPort(QString portNumber);
     QStringList updatePortCombobox();
+
+    void closePort();
 
 protected:
     void routeMouseEvents(QMouseEvent* event);
@@ -45,11 +50,20 @@ protected:
     virtual void timerEvent(QTimerEvent* event);
 
 private:
-    QCustomPlot* m_CustomPlot;
+    QCustomPlot* m_Plot;
     ParserTelemetry* _pPortTelemetry;
     ParserTelemetry* _pRawBuffer;
     receivedData* receivedData;
+    QCPGraph* limitTemp;
+    QCPGraph* limitCO2;
+    QCPGraph* limitCH4;
     int m_timerId;
+    QString _saveDir;
+    QFile _file;
+    double _tempLimit;
+    double _co2Limit;
+    double _ch4Limit;
+
     void setParamNames();
     void setLineEditConnections();
     void updatePortComboboxes();

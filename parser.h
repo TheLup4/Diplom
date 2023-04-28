@@ -56,6 +56,7 @@ private:
 
 protected:
     QByteArray _rawBuffer;
+    QString _strRawBuffer;
     quint64 _errorCounter;
     quint64 _packCounter;
     quint16 _lastPackCounter;
