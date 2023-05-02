@@ -1,9 +1,14 @@
 #include "parser.h"
+#include <QtMath>
 
 const int kFulTlmtPacketSize = sizeof(dataPack);
-QByteArray kTlmtHeader = "\xFF";
+QByteArray kTlmtHeader = "\xFF\xFF";
 QString strTlmtHeader = "FF";
 QString strEndLine = "\r\n";
+
+const double kA = 0.001032;
+const double kB = 0.0002387;
+const double kC = 0.000000158;
 
 ParserTelemetry::ParserTelemetry(QObject* parent) : QObject(parent)
 {
@@ -78,17 +83,17 @@ void ParserTelemetry::onReadyRead()
     if (getIsHaveFullBasePack())
         checkRawBaseData();
 
-    _strRawBuffer.append(_pPort->readLine());
-    qDebug() << _strRawBuffer;
-    if (getIsHaveFullBasePack())
-        checkRawBaseData();
+    //    _strRawBuffer.append(_pPort->readLine());
+    //    //qDebug() << _strRawBuffer;
+    //    if (getIsHaveFullBasePack())
+    //        checkRawBaseData();
 }
 
 void ParserTelemetry::checkRawBaseData()
 {
     while (_rawBuffer.contains(kTlmtHeader))
     {
-        qDebug() << _rawBuffer;
+        //qDebug() << _rawBuffer;
 
         int indexOfPackStart = _rawBuffer.indexOf(kTlmtHeader);
 
@@ -105,16 +110,20 @@ void ParserTelemetry::checkRawBaseData()
         memcpy(&packet, pack.data(), kFulTlmtPacketSize);
         //packet = reinterpret_cast<navigationData*>((uint8_t*)(pack.data()));
         //qDebug() << pack.toHex(',');
-        if (checkCRC(reinterpret_cast<unsigned char*>(pack.data()), kFulTlmtPacketSize - 1 < packet.CheckSum_XOR8))
+        countTemp(&packet);
+
+        if (kFulTlmtPacketSize -
+            2 /*checkCRC(reinterpret_cast<unsigned char*>(pack.data()), kFulTlmtPacketSize - 1 < packet.CheckSum_XOR16)*/)
         {
             _errorCounter++;
             emit sendCountErrors(_errorCounter);
         }
         else
-        {
+        {}
+        emit sendPacket(_dataPack);
 
-            emit sendPacket(packet);
-        }
+        //qDebug() << packet.temperature << packet.CO2 << packet.CH4;
+
         _rawBuffer.clear();
     }
 
@@ -142,6 +151,15 @@ bool ParserTelemetry::getIsHaveFullBasePack()
         return true;
 
     return false;
+}
+
+void ParserTelemetry::countTemp(dataPack* packet)
+{
+
+    double voltage = (double)packet->temperature / 4095 * 3.3;
+    double resist = 33000 / voltage - 10000;
+    _dataPack.temperature.append((1 / (kA + kB * log(resist) + kC * pow(log(resist), 3))) - 273.15);
+    //qDebug() << _dataPack.temperature.last() << "sss";
 }
 
 uint16_t ParserTelemetry::checkCRC(uint8_t* buf, uint8_t size)

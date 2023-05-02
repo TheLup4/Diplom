@@ -12,7 +12,7 @@ Item {
         target: objectPlot
         onSignalNewBuffer:
         {
-            console.log(buffer)
+            //console.log(buffer)
             textEdit.text = buffer;
 
         }

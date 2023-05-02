@@ -91,33 +91,48 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
-        }
 
-        CheckBox {
-            id: checkBoxTermGraph
-            x: 194
-            y: 84
-            width: 46
-            height: 33
-            checked: true
-        }
+            CheckBox {
+                id: checkBoxCH4Graph
+                x: 178
+                y: 110
+                width: 46
+                height: 33
+                checked: true
+                onCheckedChanged:
+                {
+                    objectPlot.showGraph(2,checked)
+                }
+            }
 
-        CheckBox {
-            id: checkBoxCO2Graph
-            x: 194
-            y: 133
-            width: 46
-            height: 33
-            checked: true
-        }
+            CheckBox {
+                id: checkBoxCO2Graph
+                x: 178
+                y: 51
+                width: 46
+                height: 33
+                checked: true
+                onCheckedChanged:
+                {
+                    objectPlot.showGraph(1,checked)
+                }
+            }
 
-        CheckBox {
-            id: checkBoxCH4Graph
-            x: 194
-            y: 192
-            width: 46
-            height: 33
-            checked: true
+            CheckBox {
+                id: checkBoxTermGraph
+                x: 178
+                y: 2
+                width: 46
+                height: 33
+                checked: true
+                onCheckedChanged:
+                {
+
+                    objectPlot.showGraph(0,checked)
+                }
+            }
+
+
         }
     }
 
@@ -153,35 +168,35 @@ Item {
             width: 74
             height: 28
             contentItem: Rectangle{
-            color: "#496ec2"
-            radius: 50
-            anchors.fill: parent
-            Text{
-                id:btnOpenText
-                color: "#ffffff"
-                text:"Открыть"
-                anchors.centerIn: parent
+                color: "#496ec2"
+                radius: 50
+                anchors.fill: parent
+                Text{
+                    id:btnOpenText
+                    color: "#ffffff"
+                    text:"Открыть"
+                    anchors.centerIn: parent
 
+                }
             }
-         }
 
             onClicked: {
 
 
                 if(objectPlot.portIsOpen() && btnOpenText.text == "Закрыть"){
-                btnOpenText.text = "Открыть"
+                    btnOpenText.text = "Открыть"
                     objectPlot.closePort()
                     labelPortStatus.text = "Статус порта: Закрыт"
                     comboBoxCom.enabled = true
                 }
                 else{
                     if (!objectPlot.portIsOpen() && btnOpenText.text == "Открыть"){
-                    objectPlot.openPort(comboBoxCom.currentText)
-                       if(objectPlot.portIsOpen()){
-                    btnOpenText.text = "Закрыть"
-                        labelPortStatus.text = "Статус порта: Открыт"
-                    comboBoxCom.enabled = false
-                       }
+                        objectPlot.openPort(comboBoxCom.currentText)
+                        if(objectPlot.portIsOpen()){
+                            btnOpenText.text = "Закрыть"
+                            labelPortStatus.text = "Статус порта: Открыт"
+                            comboBoxCom.enabled = false
+                        }
                     }
                 }
             }
@@ -207,19 +222,19 @@ Item {
             delegate: ItemDelegate {
                 id:delegat
 
-                      width: comboBoxCom.width
-                      contentItem: Text {
-                          text:modelData
-                        font.pixelSize: 12
-                        color:"#496ec2"
+                width: comboBoxCom.width
+                contentItem: Text {
+                    text:modelData
+                    font.pixelSize: 12
+                    color:"#496ec2"
 
 
-                        verticalAlignment: Text.AlignVCente
-                        horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCente
+                    horizontalAlignment: Text.AlignHCenter
 
                 }
-                      anchors.horizontalCenter: parent.horizontalCenter
-                      anchors.left: parent.left
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.left: parent.left
 
             }
 
@@ -239,15 +254,15 @@ Item {
             width: 74
             height: 28
             contentItem: Rectangle{
-            color: "#496ec2"
-            radius: 50
-            anchors.fill: parent
-            Text{
-                color: "#ffffff"
-                text:"Обновить"
-                anchors.centerIn: parent
+                color: "#496ec2"
+                radius: 50
+                anchors.fill: parent
+                Text{
+                    color: "#ffffff"
+                    text:"Обновить"
+                    anchors.centerIn: parent
 
-            }
+                }
             }
 
 
@@ -293,8 +308,8 @@ Item {
             z: 1
             font.pointSize: 10
             onTextChanged: {
-            if (checkBoxTemp.checked)
-                objectPlot.setLimits(3,true,text.toString())
+                if (checkBoxTemp.checked)
+                    objectPlot.setLimits(3,true,text.toString())
 
             }
         }
@@ -308,8 +323,8 @@ Item {
             text: "0"
             font.pointSize: 10
             onTextChanged: {
-            if (checkBoxCH4.checked)
-                objectPlot.setLimits(5,true,text.toString())
+                if (checkBoxCH4.checked)
+                    objectPlot.setLimits(5,true,text.toString())
 
             }
 
@@ -325,7 +340,7 @@ Item {
             font.pointSize: 10
             onTextChanged: {
                 if (checkBoxCO2.checked)
-                objectPlot.setLimits(4,true,text.toString())
+                    objectPlot.setLimits(4,true,text.toString())
 
             }
         }
@@ -336,13 +351,14 @@ Item {
             y: 18
             width: 46
             height: 33
+             Component.onCompleted: objectPlot.setLimits(3,false,textFieldTemp.text.toString())
             onCheckedChanged: {
                 if (checked)
-                    objectPlot.setLimits(3,true,text.toString())
+                    objectPlot.setLimits(3,true,textFieldTemp.text.toString())
                 else
-                    objectPlot.setLimits(3,false,text.toString())
-                }
+                    objectPlot.setLimits(3,false,textFieldTemp.text.toString())
             }
+        }
 
 
         CheckBox {
@@ -351,12 +367,13 @@ Item {
             y: 89
             width: 46
             height: 33
+            Component.onCompleted: objectPlot.setLimits(4,false,textFieldCO2.text.toString())
             onCheckedChanged: {
                 if (checked)
-                    objectPlot.setLimits(4,true,text.toString())
+                    objectPlot.setLimits(4,true,textFieldCO2.text.toString())
                 else
-                    objectPlot.setLimits(4,false,text.toString())
-                }
+                    objectPlot.setLimits(4,false,textFieldCO2.text.toString())
+            }
         }
 
         CheckBox {
@@ -365,12 +382,13 @@ Item {
             y: 166
             width: 46
             height: 33
+            Component.onCompleted: objectPlot.setLimits(5,false,textFieldCH4.text.toString())
             onCheckedChanged: {
                 if (checked)
-                    objectPlot.setLimits(5,true,text.toString())
+                    objectPlot.setLimits(5,true,textFieldCH4.text.toString())
                 else
-                    objectPlot.setLimits(5,false,text.toString())
-                }
+                    objectPlot.setLimits(5,false,textFieldCH4.text.toString())
+            }
         }
 
         Label {
@@ -468,20 +486,20 @@ Item {
             width: 132
             height: 43
             contentItem: Rectangle{
-            color: "#496ec2"
-            radius: 50
-            anchors.fill: parent
-            Text{
-                id:btnFileText
-                color: "#ffffff"
-                text:"Запись в файл"
-                anchors.centerIn: parent
+                color: "#496ec2"
+                radius: 50
+                anchors.fill: parent
+                Text{
+                    id:btnFileText
+                    color: "#ffffff"
+                    text:"Запись в файл"
+                    anchors.centerIn: parent
+
+                }
 
             }
-
-         }
             onClicked: {
-            fileDialog.visible = true
+                fileDialog.visible = true
             }
         }
 
@@ -501,19 +519,25 @@ Item {
             id:fileDialog
             selectFolder: true
             title: "Выберите директорию сохранения файла"
-                folder: shortcuts.home
-                onAccepted: {
-                    labelDir.text = "Директория сохранения:\r\n "+fileDialog.folder
-                    objectPlot.setSaveDir(fileDialog.folder)
-                    console.log(fileDialog.folder)
+            folder: shortcuts.home
+            onAccepted: {
+                labelDir.text = "Директория сохранения:\r\n "+fileDialog.folder
+                objectPlot.setSaveDir(fileDialog.folder)
+                console.log(fileDialog.folder)
 
-                }
-                onRejected: {
-                    console.log("Canceled")
-                }
+            }
+            onRejected: {
+                console.log("Canceled")
+            }
         }
     }
 }
+
+
+
+
+
+
 
 
 

@@ -44,8 +44,7 @@ QStringList CustomPlotItem::updatePortCombobox()
 void CustomPlotItem::openPort(QString portNumber)
 {
     if (!_pPortTelemetry->portIsOpen())
-        _pPortTelemetry->openPort(portNumber, QSerialPort::Baud115200, QSerialPort::Data8, QSerialPort::OneStop,
-                                  QSerialPort::NoParity);
+        _pPortTelemetry->openPort(portNumber, 50000, QSerialPort::Data8, QSerialPort::OneStop, QSerialPort::NoParity);
 
     if (_pPortTelemetry->portIsOpen())
         m_timerId = startTimer(1000);
@@ -82,10 +81,15 @@ void CustomPlotItem::initCustomPlot()
     limitCH4 = new QCPGraph(m_Plot->xAxis, m_Plot->yAxis);
     limitCH4->setPen(QPen(Qt::blue | Qt::DashLine));
 
+    m_Plot->addGraph(m_Plot->xAxis2);
+    m_Plot->graph(6)->setVisible(false);
+    m_Plot->xAxis2->setVisible(false);
+
     m_Plot->xAxis->setLabel("Время, сек.");
     m_Plot->yAxis->setLabel("Концентрация мг/куб. м");
     m_Plot->xAxis->setRange(0, 60);
-    m_Plot->yAxis->setRange(0, 10);
+    m_Plot->yAxis->setRange(0, 25);
+    m_Plot->xAxis2->setRange(0, 60);
     m_Plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
 
     connect(m_Plot, &QCustomPlot::afterReplot, this, &CustomPlotItem::onCustomReplot);
@@ -132,12 +136,38 @@ void CustomPlotItem::mouseDoubleClickEvent(QMouseEvent* event)
 
 void CustomPlotItem::wheelEvent(QWheelEvent* event) { routeWheelEvents(event); }
 
-void CustomPlotItem::onPacketReceived(dataPack packet)
+void CustomPlotItem::onPacketReceived(receivedData receivedData)
 {
+    static int count = 0;
+    //receivedData->temperature.last();
+    qDebug() << receivedData.temperature.last() << count;
+    //    receivedData->CO2.append(packet.CO2);
+    //    receivedData->CH4.append(packet.CH4);
+    m_Plot->graph(0)->addData(count, receivedData.temperature.last());
+    QTextStream writeStream(&_file);
+    if (_saveDir != "")
+        if (_file.isOpen())
+            writeStream << QDateTime::currentDateTime().toString("hh:mm:ss.zz dd.MM.yyyy ") + "\t" +
+                               QString::number(receivedData.temperature.last(), 'f', 4) + "\t" /*+
+                               QString::number(receivedData.CO2.last(), 'f', 4) + "\t" +
+                               QString::number(receivedData.CH4.last(), 'f', 4) */
+                               + "\r\n";
+    if (!_pPortTelemetry->portIsOpen())
+        _file.close();
+    QMessageBox warning;
+    if (receivedData.temperature.last() > _tempLimit && limitTemp->visible() && !warning.isVisible())
+    {
+        warning.setWindowTitle("Внимание");
+        warning.setText(QString("Температура превышает допустимое значение!"));
+        warning.exec();
+    }
+    //            if (u2 > _co2Limit && limitCO2->visible())
+    //                QMessageBox::warning(nullptr, "Внимание", "Концентрация CO2 превышает допустимое значение");
+    //            if (u3 > _ch4Limit && limitCH4->visible())
+    //                QMessageBox::warning(nullptr, "Внимание", "Концентрация CH4 превышает допустимое значение");
+    count++;
 
-    receivedData->temperature.append(packet.temperature);
-    receivedData->CO2.append(packet.CO2);
-    receivedData->CH4.append(packet.CH4);
+    m_Plot->replot();
 }
 void CustomPlotItem::showGraph(int index, bool isShown) { m_Plot->graph(index)->setVisible(isShown); }
 
@@ -166,43 +196,33 @@ void CustomPlotItem::setLimits(int index, bool isShown, QString value)
 void CustomPlotItem::timerEvent(QTimerEvent* event)
 {
     static int t = 0;
-    //    m_Plot->graph(0)->addData(t, receivedData->temperature.at(t));
-    //    m_Plot->graph(1)->addData(t, receivedData->CO2.at(t));
-    //    m_Plot->graph(2)->addData(t, receivedData->CH4.at(t));
+
     double u1, u2, u3;
     if (_pPortTelemetry->portIsOpen())
     {
-        u1 = ((double)rand() / RAND_MAX) * 5;
-        u2 = ((double)rand() / RAND_MAX) * 5;
-        u3 = ((double)rand() / RAND_MAX) * 5;
-        m_Plot->graph(0)->addData(t, u1);
-        m_Plot->graph(1)->addData(t, u2);
-        m_Plot->graph(2)->addData(t, u3);
-
-        //        if (u1 > _tempLimit && limitTemp->visible())
-        //            QMessageBox::warning(nullptr, "Внимание", "Температура превышает допустимое значение");
-        //        if (u2 > _co2Limit && limitCO2->visible())
-        //            QMessageBox::warning(nullptr, "Внимание", "Концентрация CO2 превышает допустимое значение");
-        //        if (u3 > _ch4Limit && limitCH4->visible())
-        //            QMessageBox::warning(nullptr, "Внимание", "Концентрация CH4 превышает допустимое значение");
-
-        QTextStream writeStream(&_file);
-        if (_saveDir != "")
-            if (_file.isOpen())
-                writeStream << QString::number(t) + " сек.\t" + QString::number(u1, 'f', 2) + "\t" +
-                                   QString::number(u2, 'f', 2) + "\t" + QString::number(u3, 'f', 2) + "\r\n";
+        // if (receivedData.temperature.size() > 0)
+        //        m_Plot->graph(0)->addData(t, receivedData.temperature.last());
+        //            m_Plot->graph(1)->addData(t, receivedData->CO2.at(t));
+        //            m_Plot->graph(2)->addData(t, receivedData->CH4.at(t));
+        //u1 = ((double)rand() / RAND_MAX) * 5;
+        //        u2 = ((double)rand() / RAND_MAX) * 5;
+        //        u3 = ((double)rand() / RAND_MAX) * 5;
+        //        //m_Plot->graph(0)->addData(t, u1);
+        //        m_Plot->graph(1)->addData(t, u2);
+        m_Plot->graph(6)->addData(t, 0);
     }
 
     // qDebug() << Q_FUNC_INFO << QString("Adding dot t = %1, S = %2").arg(t).arg(U);
     t++;
-    if (!_pPortTelemetry->portIsOpen())
-        _file.close();
+
     m_Plot->replot();
 }
 
 void CustomPlotItem::graphClicked(QCPAbstractPlottable* plottable)
 {
-    //qDebug() << Q_FUNC_INFO << QString("Clicked on graph '%1 ").arg(plottable->name());
+
+    qDebug() << Q_FUNC_INFO << QString("Clicked on graph '%1 ").arg(plottable->name());
+    m_Plot->rescaleAxes();
 }
 
 void CustomPlotItem::routeMouseEvents(QMouseEvent* event)
@@ -244,7 +264,7 @@ void CustomPlotItem::setSaveDir(QString saveDirQml)
 {
     qDebug() << saveDirQml;
     _saveDir = saveDirQml.remove("file:///");
-    qDebug() << _saveDir + "/Tlmt_" + ".txt";
+    qDebug() << _saveDir + "/Tlmt_" + QDateTime::currentDateTime().toString("hh:mm_dd.MM.yyyy ") + ".txt";
     _file.setFileName(_saveDir + "/Tlmt_" + ".txt");
     if (!_file.open(QIODevice::WriteOnly | QIODevice::Text))
         QMessageBox::warning(nullptr, "Ошибка", "Не удалось создать файл");

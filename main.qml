@@ -250,6 +250,7 @@ ApplicationWindow {
         anchors.top: parent.top
         anchors.topMargin: 32
         currentIndex: 0
+        interactive: false
 
 
         FirstPage {

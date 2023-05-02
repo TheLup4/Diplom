@@ -28,7 +28,7 @@ public:
 signals:
     void setMessage(QString msg);
     void changeStatePort(bool isRunning);
-    void sendPacket(dataPack packet);
+    void sendPacket(receivedData receivedData);
     void sendCountErrors(int _errorCounter);
     void sendRawBuffer(QString rawBuffer);
 
@@ -45,6 +45,7 @@ private:
     double _VLV;
     char chbuf[100];
     dataPack _packet;
+    receivedData _dataPack;
 
     bool parseTlmt(QByteArray& pack);
     void checkRawBaseData();
@@ -53,6 +54,8 @@ private:
     void checkBasePack(QByteArray pack);
 
     uint16_t checkCRC(uint8_t* buf, uint8_t size);
+
+    void countTemp(dataPack* packet);
 
 protected:
     QByteArray _rawBuffer;

@@ -208,6 +208,7 @@ double QCPVector2D::distanceSquaredToLine(const QLineF& line) const
   
   \see distanceSquaredToLine
 */
+
 double QCPVector2D::distanceToStraightLine(const QCPVector2D& base, const QCPVector2D& direction) const
 {
     return qAbs((*this - base).dot(direction.perpendicular())) / direction.length();

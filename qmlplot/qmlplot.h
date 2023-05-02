@@ -53,7 +53,6 @@ private:
     QCustomPlot* m_Plot;
     ParserTelemetry* _pPortTelemetry;
     ParserTelemetry* _pRawBuffer;
-    receivedData* receivedData;
     QCPGraph* limitTemp;
     QCPGraph* limitCO2;
     QCPGraph* limitCH4;
@@ -74,7 +73,7 @@ private slots:
     void graphClicked(QCPAbstractPlottable* plottable);
     void onCustomReplot();
     void updateCustomPlotSize();
-    void onPacketReceived(dataPack packet);
+    void onPacketReceived(receivedData receivedData);
     void onBufferReceived(QString rawBuffer);
 signals:
     Q_INVOKABLE void signalNewBuffer(QString buffer);
