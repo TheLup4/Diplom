@@ -351,7 +351,7 @@ Item {
             y: 18
             width: 46
             height: 33
-             Component.onCompleted: objectPlot.setLimits(3,false,textFieldTemp.text.toString())
+            Component.onCompleted: objectPlot.setLimits(3,false,textFieldTemp.text.toString())
             onCheckedChanged: {
                 if (checked)
                     objectPlot.setLimits(3,true,textFieldTemp.text.toString())
@@ -454,10 +454,9 @@ Item {
 
     GroupBox {
         id: groupBox4
+        height: 629
         anchors.top: parent.top
         anchors.topMargin: 47
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 34
         anchors.left: parent.left
         anchors.leftMargin: 361
         anchors.right: parent.right
@@ -531,7 +530,46 @@ Item {
             }
         }
     }
+
+    GroupBox {
+        id: groupBox6
+        x: 361
+        y: 703
+        width: 1199
+        height: 111
+        title: qsTr("")
+
+        Label {
+            id: label11
+            x: -12
+            y: -32
+            width: 180
+            height: 19
+            color: "#496ec2"
+            text: qsTr("Математические функции")
+            verticalAlignment: Text.AlignVCenter
+            lineHeight: 0.8
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -569,5 +607,7 @@ Item {
     D{i:13;anchors_height:28;anchors_width:74;anchors_x:179;anchors_y:0}D{i:16;anchors_height:28;anchors_width:163;anchors_x:0;anchors_y:0}
 D{i:20;anchors_height:28;anchors_width:74;anchors_x:179;anchors_y:34}D{i:23;anchors_x:0;anchors_y:40}
 D{i:11;anchors_height:96;anchors_width:277;anchors_x:22;anchors_y:47}D{i:36;anchors_height:629;anchors_width:1199;anchors_x:361;anchors_y:47}
+D{i:39;anchors_height:43;anchors_x:61;anchors_y:0}D{i:42;anchors_height:62;anchors_x:-12;anchors_y:37}
+D{i:38;anchors_height:111;anchors_x:22;anchors_y:703}D{i:44;anchors_height:111;anchors_y:703}
 }
  ##^##*/

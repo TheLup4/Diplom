@@ -56,6 +56,10 @@ private:
     QCPGraph* limitTemp;
     QCPGraph* limitCO2;
     QCPGraph* limitCH4;
+    QCPGraph* tempAverage;
+    QCPGraph* co2Average;
+    QCPGraph* ch4Average;
+
     int m_timerId;
     QString _saveDir;
     QFile _file;
