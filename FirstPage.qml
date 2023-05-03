@@ -550,6 +550,32 @@ Item {
             verticalAlignment: Text.AlignVCenter
             lineHeight: 0.8
         }
+
+        Label {
+            id: label12
+            x: 8
+            y: 0
+            width: 141
+            height: 35
+            color: "#496ec2"
+            text: qsTr("Скользящее среднее")
+            font.pointSize: 12
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        CheckBox {
+            id: checkBoxAverage
+            x: 186
+            y: 2
+            width: 46
+            height: 33
+            checked: false
+
+        }
+
+
+
     }
 }
 

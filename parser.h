@@ -46,7 +46,8 @@ private:
     char chbuf[100];
     dataPack _packet;
     receivedData _dataPack;
-
+    slideAverage _average;
+    void countSlideAverage();
     bool parseTlmt(QByteArray& pack);
     void checkRawBaseData();
     bool getIsHaveFullBasePack();

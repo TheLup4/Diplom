@@ -153,6 +153,20 @@ bool ParserTelemetry::getIsHaveFullBasePack()
     return false;
 }
 
+void ParserTelemetry::countSlideAverage()
+{
+    if (_average.temperatureAver.isEmpty())
+        _average.temperatureAver.append(0);
+    if (_dataPack.temperature.size() >= 50)
+    {
+        for (int i = 0; i < 50; i++)
+        {
+            _average.temperatureAver[_average.temperatureAver.size() - 1] += _dataPack.temperature[i];
+        }
+        _average.temperatureAver[_average.temperatureAver.size() - 1] =
+            _average.temperatureAver[_average.temperatureAver.size() - 1] / 50;
+    }
+}
 void ParserTelemetry::countTemp(dataPack* packet)
 {
 

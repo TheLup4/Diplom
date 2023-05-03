@@ -22,6 +22,13 @@ struct receivedData
     QVector<double> temperature;
     QVector<double> CH4;
 };
+
+struct slideAverage
+{
+    QVector<double> CO2Aver;
+    QVector<double> temperatureAver;
+    QVector<double> CH4Aver;
+};
 #pragma pack(0)
 
 #endif // PACKET_H
